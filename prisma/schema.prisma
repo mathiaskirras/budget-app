@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Budget {
+  id     String @id @default(uuid())
+  userId String
+  name   String @default("Mit budget")
+
+  categories   Category[]
+  cashflows    CashflowItem[]
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id          String       @id @default(uuid())
+  budgetId    String
+  name        String
+  description String?
+  colorHex    String
+  type        CategoryType @default(EXPENSE)
+  target      Decimal?
+
+  budget       Budget        @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CashflowItem {
+  id          String       @id @default(uuid())
+  budgetId    String
+  type        CashflowType
+  name        String
+  description String?
+  amount      Decimal
+  startDate   DateTime
+  endDate     DateTime?
+
+  budget Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  budgetId    String
+  categoryId  String
+  amount      Decimal
+  date        DateTime
+  description String?
+
+  budget   Budget   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum CashflowType {
+  INCOME
+  FIXED_EXPENSE
+}
+
+enum CategoryType {
+  EXPENSE
+  SAVING
+  INVESTMENT
+}
