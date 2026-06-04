@@ -11,7 +11,7 @@
       <input
         v-model="form.name"
         type="text"
-        class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
+        class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-400"
         placeholder="Fx Dagligvarer"
       >
     </div>
@@ -24,7 +24,7 @@
       <input
         v-model="form.description"
         type="text"
-        class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
+        class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-400"
         placeholder="Valgfri"
       >
     </div>
@@ -51,7 +51,7 @@
           v-model.number="form.target"
           type="number"
           min="0"
-          class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
+          class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-400"
           placeholder="2500"
         >
       </div>
@@ -64,7 +64,7 @@
 
       <select
         v-model="form.type"
-        class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
+        class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-400"
       >
         <option value="EXPENSE">
           Forbrug
@@ -81,7 +81,7 @@
     <div class="flex gap-3">
       <button
         type="submit"
-        class="flex-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500"
+        class="flex-1 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500"
       >
         {{ submitLabel }}
       </button>

@@ -2,7 +2,9 @@
   <div
     :class="[
       'rounded-2xl border bg-white p-4 shadow-sm',
-      isOverBudget ? 'border-red-200' : 'border-slate-200',
+      isOverBudget
+        ? 'border-red-200'
+        : 'border-slate-200',
     ]"
   >
     <div class="flex items-center justify-between gap-4">
@@ -29,24 +31,34 @@
       <p
         :class="[
           'text-sm font-semibold',
-          isOverBudget ? 'text-red-600' : 'text-slate-900',
+          isOverBudget
+            ? 'text-red-600'
+            : 'text-slate-900',
         ]"
       >
         {{ formatCurrency(spent) }}
       </p>
     </div>
 
-    <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+    <div
+      v-if="target > 0"
+      class="mt-3 h-2 overflow-hidden rounded-full bg-slate-100"
+    >
       <div
         :class="[
           'h-full rounded-full',
-          isOverBudget ? 'bg-red-400' : '',
+          isOverBudget
+            ? 'bg-red-400'
+            : '',
         ]"
         :style="progressStyle"
       />
     </div>
 
-    <div class="mt-2 flex justify-between text-xs text-slate-500">
+    <div
+      v-if="target > 0"
+      class="mt-2 flex justify-between text-xs text-slate-500"
+    >
       <span>{{ formatCurrency(spent) }} brugt</span>
       <span>{{ formatCurrency(target) }} budget</span>
     </div>
@@ -64,6 +76,10 @@ const props = defineProps<{
 const { formatCurrency } = useCurrency();
 
 const isOverBudget = computed(() => {
+  if (props.target <= 0) {
+    return false;
+  }
+
   return props.spent > props.target;
 });
 
@@ -72,13 +88,18 @@ const progress = computed(() => {
     return 0;
   }
 
-  return Math.min((props.spent / props.target) * 100, 100);
+  return Math.min(
+    (props.spent / props.target) * 100,
+    100,
+  );
 });
 
 const progressStyle = computed(() => {
   return {
     width: `${progress.value}%`,
-    backgroundColor: isOverBudget.value ? undefined : props.color,
+    backgroundColor: isOverBudget.value
+      ? undefined
+      : props.color,
   };
 });
 </script>

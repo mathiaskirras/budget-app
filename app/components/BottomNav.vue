@@ -11,7 +11,7 @@
           :class="[
             'flex min-w-20 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 transition',
             isActive(item.to)
-              ? 'bg-indigo-50 text-indigo-600'
+              ? 'bg-emerald-50 text-emerald-600'
               : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700',
           ]"
         >
@@ -39,14 +39,14 @@ const navigationItems = [
     to: '/',
   },
   {
+    label: 'Ny postering',
+    icon: 'heroicons:plus-circle',
+    to: '/ny-postering',
+  },
+  {
     label: 'Posteringer',
     icon: 'heroicons:banknotes',
     to: '/posteringer',
-  },
-  {
-    label: 'Kategorier',
-    icon: 'heroicons:tag',
-    to: '/kategorier',
   },
 ];
 

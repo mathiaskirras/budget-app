@@ -1,56 +1,54 @@
 <template>
   <PageHeader
     title="Posteringer"
-    description="Registrer dine køb og udgifter"
   />
 
   <MonthPicker
     :month="month"
     :year="year"
+    :can-go-next="canGoNext"
     @previous-month="previousMonth"
     @next-month="nextMonth"
     @previous-year="previousYear"
     @next-year="nextYear"
   />
 
-  <button
-    type="button"
-    :class="[
-      'mt-4 mb-4 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3 font-semibold text-white transition',
-      showForm
-        ? 'bg-slate-600 hover:bg-slate-500'
-        : 'bg-indigo-600 hover:bg-indigo-500',
-    ]"
-    @click="toggleForm"
+  <div
+    v-if="isLoading"
+    class="mt-4 rounded-2xl border border-slate-200 bg-white p-5 text-center text-sm text-slate-500"
   >
-    <Icon
-      :name="
-        showForm
-          ? 'heroicons:x-mark'
-          : 'heroicons:plus'
-      "
-      class="h-5 w-5"
-    />
-
-    {{ showForm ? 'Annuller' : 'Ny postering' }}
-  </button>
+    Henter posteringer...
+  </div>
 
   <div
-    v-if="showForm"
-    class="mb-4"
+    v-else
+    class="mt-4"
+  >
+    <TransactionList
+      :transactions="transactions"
+      @edit="openEditForm"
+      @delete="removeTransaction"
+    />
+  </div>
+
+  <div
+    v-if="selectedTransaction"
+    class="mt-4"
   >
     <TransactionForm
       :categories="categories"
       :transaction="selectedTransaction"
       @submit="saveTransaction"
     />
-  </div>
 
-  <TransactionList
-    :transactions="transactions"
-    @edit="openEditForm"
-    @delete="removeTransaction"
-  />
+    <button
+      type="button"
+      class="mt-3 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-semibold text-slate-700"
+      @click="selectedTransaction = null"
+    >
+      Annuller redigering
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -58,6 +56,7 @@ import type { Transaction, TransactionFormData } from '~~/types/transaction';
 
 const {
   month,
+  canGoNext,
   year,
   previousMonth,
   nextMonth,
@@ -72,13 +71,12 @@ const {
 
 const {
   transactions,
+  isLoading,
   fetchTransactions,
-  createTransaction,
   updateTransaction,
   deleteTransaction,
 } = useTransactions();
 
-const showForm = ref(false);
 const selectedTransaction = ref<Transaction | null>(null);
 
 onMounted(async () => {
@@ -89,36 +87,19 @@ onMounted(async () => {
 });
 
 watch([month, year], async () => {
+  selectedTransaction.value = null;
+
   await fetchTransactions(month.value, year.value);
 });
 
-const openCreateForm = () => {
-  selectedTransaction.value = null;
-  showForm.value = true;
-};
-
-const toggleForm = () => {
-  if (showForm.value) {
-    selectedTransaction.value = null;
-  }
-
-  showForm.value = !showForm.value;
-};
-
 const openEditForm = (transaction: Transaction) => {
   selectedTransaction.value = transaction;
-  showForm.value = true;
 };
 
 const saveTransaction = async (data: TransactionFormData) => {
-  if (data.id) {
-    await updateTransaction(data);
-  } else {
-    await createTransaction(data);
-  }
+  await updateTransaction(data);
 
   selectedTransaction.value = null;
-  showForm.value = false;
 };
 
 const removeTransaction = async (id: string) => {

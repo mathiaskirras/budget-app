@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 z-50 border-b border-indigo-700 bg-indigo-600">
+  <header class="sticky top-0 z-50 border-b border-emerald-700 bg-emerald-600">
     <div class="mx-auto flex h-16 max-w-4xl items-center justify-between px-4">
       <h1 class="text-xl font-bold text-white">
         Dit budget
@@ -8,7 +8,7 @@
       <div class="relative">
         <button
           type="button"
-          class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500 text-white transition hover:bg-indigo-400"
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white transition hover:bg-emerald-400"
           @click="isMenuOpen = !isMenuOpen"
         >
           <Icon
@@ -31,6 +31,18 @@
               class="h-5 w-5 text-slate-400"
             />
             <span>Indkomst og faste udgifter</span>
+          </NuxtLink>
+
+          <NuxtLink
+            to="/kategorier"
+            class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50"
+            @click="isMenuOpen = false"
+          >
+            <Icon
+              name="heroicons:tag"
+              class="h-5 w-5 text-slate-400"
+            />
+            <span>Kategorier</span>
           </NuxtLink>
 
           <NuxtLink

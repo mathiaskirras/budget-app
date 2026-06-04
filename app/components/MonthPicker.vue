@@ -15,7 +15,7 @@
       <button
         type="button"
         class="rounded-xl px-4 py-2 text-center transition hover:bg-slate-50"
-        @click="toggleMode"
+        @click="emit('toggleMode')"
       >
         <p class="font-semibold text-slate-900">
           {{ label }}
@@ -28,7 +28,13 @@
 
       <button
         type="button"
-        class="rounded-lg p-2 text-slate-600 transition hover:bg-slate-100"
+        :disabled="!canGoNext"
+        :class="[
+          'rounded-lg p-2 transition',
+          canGoNext
+            ? 'text-slate-600 hover:bg-slate-100'
+            : 'cursor-not-allowed text-slate-300',
+        ]"
         @click="goNext"
       >
         <Icon
@@ -44,6 +50,8 @@
 const props = defineProps<{
   month: number;
   year: number;
+  mode: 'month' | 'year';
+  canGoNext: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -51,9 +59,8 @@ const emit = defineEmits<{
   nextMonth: [];
   previousYear: [];
   nextYear: [];
+  toggleMode: [];
 }>();
-
-const mode = ref<'month' | 'year'>('month');
 
 const monthName = computed(() => {
   const date = new Date(props.year, props.month - 1);
@@ -66,7 +73,7 @@ const monthName = computed(() => {
 });
 
 const label = computed(() => {
-  if (mode.value === 'year') {
+  if (props.mode === 'year') {
     return props.year.toString();
   }
 
@@ -74,19 +81,13 @@ const label = computed(() => {
 });
 
 const modeLabel = computed(() => {
-  return mode.value === 'month'
+  return props.mode === 'month'
     ? 'Tryk for år'
     : 'Tryk for måned';
 });
 
-const toggleMode = () => {
-  mode.value = mode.value === 'month'
-    ? 'year'
-    : 'month';
-};
-
 const goPrevious = () => {
-  if (mode.value === 'year') {
+  if (props.mode === 'year') {
     emit('previousYear');
     return;
   }
@@ -95,7 +96,11 @@ const goPrevious = () => {
 };
 
 const goNext = () => {
-  if (mode.value === 'year') {
+  if (!props.canGoNext) {
+    return;
+  }
+
+  if (props.mode === 'year') {
     emit('nextYear');
     return;
   }
