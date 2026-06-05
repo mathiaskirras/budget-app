@@ -1,8 +1,4 @@
 <template>
-  <PageHeader
-    title="Kategorier"
-  />
-
   <button
     type="button"
     class="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
@@ -37,7 +33,14 @@
     v-else
     :categories="categories"
     @edit="openEditForm"
-    @delete="removeCategory"
+    @delete="openDeleteDialog"
+  />
+
+  <ConfirmDialog
+    v-model="isDeleteDialogOpen"
+    title="Slet kategori"
+    description="Er du sikker på, at du vil slette kategorien? Denne handling kan ikke fortrydes."
+    @confirm="confirmDeleteCategory"
   />
 </template>
 
@@ -55,6 +58,8 @@ const {
 
 const isFormOpen = ref(false);
 const selectedCategory = ref<Category | null>(null);
+const selectedCategoryId = ref<string | null>(null);
+const isDeleteDialogOpen = ref(false);
 
 onMounted(async () => {
   await fetchCategories();
@@ -85,13 +90,18 @@ const saveCategory = async (data: CategoryFormData) => {
   closeForm();
 };
 
-const removeCategory = async (id: string) => {
-  const confirmed = confirm('Er du sikker på, at du vil slette kategorien?');
+const openDeleteDialog = (id: string) => {
+  selectedCategoryId.value = id;
+  isDeleteDialogOpen.value = true;
+};
 
-  if (!confirmed) {
+const confirmDeleteCategory = async () => {
+  if (!selectedCategoryId.value) {
     return;
   }
 
-  await deleteCategory(id);
+  await deleteCategory(selectedCategoryId.value);
+
+  selectedCategoryId.value = null;
 };
 </script>

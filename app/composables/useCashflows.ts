@@ -3,21 +3,16 @@ import type {
   CashflowItem,
 } from '~~/types/cashflow';
 
-const DEV_BUDGET_ID = 'local-dev';
-
 export const useCashflows = () => {
   const cashflows = useState<CashflowItem[]>('cashflows', () => []);
   const isLoading = useState<boolean>('cashflows-loading', () => false);
 
   const fetchCashflows = async () => {
+    cashflows.value = [];
     isLoading.value = true;
 
     try {
-      cashflows.value = await $fetch<CashflowItem[]>('/api/cashflows/list', {
-        query: {
-          budgetId: DEV_BUDGET_ID,
-        },
-      });
+      cashflows.value = await $fetch<CashflowItem[]>('/api/cashflows/list');
     } finally {
       isLoading.value = false;
     }
@@ -26,10 +21,7 @@ export const useCashflows = () => {
   const createCashflow = async (data: CashflowFormData) => {
     const item = await $fetch<CashflowItem>('/api/cashflows/create', {
       method: 'POST',
-      body: {
-        ...data,
-        budgetId: DEV_BUDGET_ID,
-      },
+      body: data,
     });
 
     cashflows.value.push(item);

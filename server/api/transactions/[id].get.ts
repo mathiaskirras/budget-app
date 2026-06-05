@@ -1,6 +1,8 @@
+import { getCurrentBudget } from '../../utils/getCurrentBudget';
 import { prisma } from '../../utils/prisma';
 
 export default defineEventHandler(async (event) => {
+  const budget = await getCurrentBudget(event);
   const id = getRouterParam(event, 'id');
 
   if (!id) {
@@ -10,9 +12,10 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  return prisma.transaction.findUniqueOrThrow({
+  return prisma.transaction.findFirstOrThrow({
     where: {
       id,
+      budgetId: budget.id,
     },
     include: {
       category: true,

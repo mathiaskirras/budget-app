@@ -1,12 +1,11 @@
 import type { Category, CategoryFormData } from '~~/types/category';
 
-const DEV_BUDGET_ID = 'local-dev';
-
 export const useCategories = () => {
   const categories = useState<Category[]>('categories', () => []);
   const isLoading = useState<boolean>('categories-loading', () => false);
 
   const fetchCategories = async () => {
+    categories.value = [];
     isLoading.value = true;
 
     try {
@@ -19,31 +18,20 @@ export const useCategories = () => {
   const createCategory = async (data: CategoryFormData) => {
     const category = await $fetch<Category>('/api/categories/create', {
       method: 'POST',
-      body: {
-        ...data,
-        budgetId: DEV_BUDGET_ID,
-      },
+      body: data,
     });
 
     categories.value.push(category);
   };
 
   const updateCategory = async (data: CategoryFormData) => {
-    if (!data.id) {
-      return;
-    }
-
     const category = await $fetch<Category>('/api/categories/update', {
       method: 'POST',
       body: data,
     });
 
     categories.value = categories.value.map((item) => {
-      if (item.id === category.id) {
-        return category;
-      }
-
-      return item;
+      return item.id === category.id ? category : item;
     });
   };
 

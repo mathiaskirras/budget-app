@@ -1,6 +1,8 @@
+import { getCurrentBudget } from '../../utils/getCurrentBudget';
 import { prisma } from '../../utils/prisma';
 
 export default defineEventHandler(async (event) => {
+  const budget = await getCurrentBudget(event);
   const body = await readBody(event);
 
   if (!body.id) {
@@ -10,9 +12,23 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  return prisma.transaction.update({
+  const transaction = await prisma.transaction.findFirstOrThrow({
     where: {
       id: body.id,
+      budgetId: budget.id,
+    },
+  });
+
+  await prisma.category.findFirstOrThrow({
+    where: {
+      id: body.categoryId,
+      budgetId: budget.id,
+    },
+  });
+
+  return prisma.transaction.update({
+    where: {
+      id: transaction.id,
     },
     data: {
       categoryId: body.categoryId,

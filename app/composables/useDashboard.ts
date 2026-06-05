@@ -1,7 +1,5 @@
 import type { DashboardData } from '~~/types/dashboard';
 
-const DEV_BUDGET_ID = 'local-dev';
-
 export const useDashboard = () => {
   const dashboard = useState<DashboardData | null>(
     'dashboard',
@@ -18,12 +16,12 @@ export const useDashboard = () => {
     year: number,
     mode: 'month' | 'year',
   ) => {
+    dashboard.value = null;
     isLoading.value = true;
 
     try {
       dashboard.value = await $fetch<DashboardData>('/api/dashboard', {
         query: {
-          budgetId: DEV_BUDGET_ID,
           month,
           year,
           mode,

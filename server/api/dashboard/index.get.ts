@@ -1,17 +1,18 @@
+import { getCurrentBudget } from '../../utils/getCurrentBudget';
 import { prisma } from '../../utils/prisma';
 
 export default defineEventHandler(async (event) => {
+  const budget = await getCurrentBudget(event);
   const query = getQuery(event);
 
-  const budgetId = query.budgetId as string;
   const year = Number(query.year);
   const month = Number(query.month);
   const mode = query.mode === 'year' ? 'year' : 'month';
 
-  if (!budgetId || !year || !month) {
+  if (!year || !month) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'budgetId, year and month are required',
+      statusMessage: 'year and month are required',
     });
   }
 
@@ -65,7 +66,7 @@ export default defineEventHandler(async (event) => {
 
   const categories = await prisma.category.findMany({
     where: {
-      budgetId,
+      budgetId: budget.id,
     },
     orderBy: {
       name: 'asc',
@@ -74,7 +75,7 @@ export default defineEventHandler(async (event) => {
 
   const transactions = await prisma.transaction.findMany({
     where: {
-      budgetId,
+      budgetId: budget.id,
       date: {
         gte: startDate,
         lt: endDate,
@@ -84,7 +85,7 @@ export default defineEventHandler(async (event) => {
 
   const cashflows = await prisma.cashflowItem.findMany({
     where: {
-      budgetId,
+      budgetId: budget.id,
       startDate: {
         lt: endDate,
       },
@@ -104,7 +105,9 @@ export default defineEventHandler(async (event) => {
   const periodMonths = monthsBetween(startDate, periodEndDate);
 
   const income = cashflows
-    .filter((cashflow) => cashflow.type === 'INCOME')
+    .filter((cashflow) => {
+      return cashflow.type === 'INCOME';
+    })
     .reduce((total, cashflow) => {
       return total + Number(cashflow.amount) * getActiveMonthsInPeriod(
         cashflow.startDate,
@@ -113,7 +116,9 @@ export default defineEventHandler(async (event) => {
     }, 0);
 
   const fixedExpenses = cashflows
-    .filter((cashflow) => cashflow.type === 'FIXED_EXPENSE')
+    .filter((cashflow) => {
+      return cashflow.type === 'FIXED_EXPENSE';
+    })
     .reduce((total, cashflow) => {
       return total + Number(cashflow.amount) * getActiveMonthsInPeriod(
         cashflow.startDate,
@@ -122,7 +127,9 @@ export default defineEventHandler(async (event) => {
     }, 0);
 
   const extraIncome = transactions
-    .filter((transaction) => Number(transaction.amount) < 0)
+    .filter((transaction) => {
+      return Number(transaction.amount) < 0;
+    })
     .reduce((total, transaction) => {
       return total + Math.abs(Number(transaction.amount));
     }, 0);
@@ -152,16 +159,28 @@ export default defineEventHandler(async (event) => {
   });
 
   const spent = categorySpending
-    .filter((category) => category.type === 'EXPENSE')
-    .reduce((total, category) => total + category.spent, 0);
+    .filter((category) => {
+      return category.type === 'EXPENSE';
+    })
+    .reduce((total, category) => {
+      return total + category.spent;
+    }, 0);
 
   const saved = categorySpending
-    .filter((category) => category.type === 'SAVING')
-    .reduce((total, category) => total + category.spent, 0);
+    .filter((category) => {
+      return category.type === 'SAVING';
+    })
+    .reduce((total, category) => {
+      return total + category.spent;
+    }, 0);
 
   const invested = categorySpending
-    .filter((category) => category.type === 'INVESTMENT')
-    .reduce((total, category) => total + category.spent, 0);
+    .filter((category) => {
+      return category.type === 'INVESTMENT';
+    })
+    .reduce((total, category) => {
+      return total + category.spent;
+    }, 0);
 
   const remaining = income
     + extraIncome

@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
     '@nuxt/icon',
-    '@nuxtjs/supabase'
+    '@nuxtjs/supabase',
+    '@vite-pwa/nuxt'
   ],
 
   css: ['./app/assets/css/main.css'],
@@ -24,6 +25,40 @@ export default defineNuxtConfig({
 
   app: {
     pageTransition: false,
+    head: {
+      link: [
+        {
+          rel: 'icon',
+          href: '/favicon.png',
+        },
+        {
+          rel: 'manifest',
+          href: '/site.webmanifest',
+        },
+      ],
+    },
+  },
+
+  pwa: {
+    manifest: {
+      name: 'Balnce',
+      short_name: 'Balnce',
+      theme_color: '#059669',
+      background_color: '#ffffff',
+
+      icons: [
+        {
+          src: '/logo-192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: '/logo-512.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ],
+    }
   },
 
   supabase: {

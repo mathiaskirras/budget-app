@@ -1,12 +1,10 @@
 <template>
-  <PageHeader
-    title="Posteringer"
-  />
-
   <MonthPicker
     :month="month"
     :year="year"
     :can-go-next="canGoNext"
+    :mode="mode"
+    @toggle-mode="toggleMode"
     @previous-month="previousMonth"
     @next-month="nextMonth"
     @previous-year="previousYear"
@@ -27,7 +25,7 @@
     <TransactionList
       :transactions="transactions"
       @edit="openEditForm"
-      @delete="removeTransaction"
+      @delete="openDeleteDialog"
     />
   </div>
 
@@ -49,6 +47,13 @@
       Annuller redigering
     </button>
   </div>
+
+  <ConfirmDialog
+    v-model="isDeleteDialogOpen"
+    title="Slet postering"
+    description="Er du sikker på, at du vil slette posteringen? Denne handling kan ikke fortrydes."
+    @confirm="confirmDeleteTransaction"
+  />
 </template>
 
 <script setup lang="ts">
@@ -58,6 +63,8 @@ const {
   month,
   canGoNext,
   year,
+  mode,
+  toggleMode,
   previousMonth,
   nextMonth,
   previousYear,
@@ -78,18 +85,24 @@ const {
 } = useTransactions();
 
 const selectedTransaction = ref<Transaction | null>(null);
+const selectedTransactionId = ref<string | null>(null);
+const isDeleteDialogOpen = ref(false);
 
 onMounted(async () => {
   await Promise.all([
     fetchCategories(),
-    fetchTransactions(month.value, year.value),
+    fetchTransactions(month.value, year.value, mode.value),
   ]);
 });
 
-watch([month, year], async () => {
+watch([month, year, mode], async () => {
   selectedTransaction.value = null;
 
-  await fetchTransactions(month.value, year.value);
+  await fetchTransactions(
+    month.value,
+    year.value,
+    mode.value,
+  );
 });
 
 const openEditForm = (transaction: Transaction) => {
@@ -102,13 +115,18 @@ const saveTransaction = async (data: TransactionFormData) => {
   selectedTransaction.value = null;
 };
 
-const removeTransaction = async (id: string) => {
-  const confirmed = confirm('Er du sikker på, at du vil slette posteringen?');
+const openDeleteDialog = (id: string) => {
+  selectedTransactionId.value = id;
+  isDeleteDialogOpen.value = true;
+};
 
-  if (!confirmed) {
+const confirmDeleteTransaction = async () => {
+  if (!selectedTransactionId.value) {
     return;
   }
 
-  await deleteTransaction(id);
+  await deleteTransaction(selectedTransactionId.value);
+
+  selectedTransactionId.value = null;
 };
 </script>

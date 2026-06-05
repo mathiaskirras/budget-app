@@ -3,8 +3,6 @@ import type {
   TransactionFormData,
 } from '~~/types/transaction';
 
-const DEV_BUDGET_ID = 'local-dev';
-
 export const useTransactions = () => {
   const transactions = useState<Transaction[]>(
     'transactions',
@@ -19,7 +17,9 @@ export const useTransactions = () => {
   const fetchTransactions = async (
     month: number,
     year: number,
+    mode: 'month' | 'year',
   ) => {
+    transactions.value = [];
     isLoading.value = true;
 
     try {
@@ -27,9 +27,9 @@ export const useTransactions = () => {
         '/api/transactions/list',
         {
           query: {
-            budgetId: DEV_BUDGET_ID,
             month,
             year,
+            mode
           },
         },
       );
@@ -45,10 +45,7 @@ export const useTransactions = () => {
       '/api/transactions/create',
       {
         method: 'POST',
-        body: {
-          ...data,
-          budgetId: DEV_BUDGET_ID,
-        },
+        body: data,
       },
     );
 

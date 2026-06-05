@@ -1,8 +1,4 @@
 <template>
-  <PageHeader
-    title="Overblik"
-  />
-
   <MonthPicker
     :month="month"
     :year="year"

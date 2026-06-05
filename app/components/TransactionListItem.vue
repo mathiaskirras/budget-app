@@ -3,11 +3,11 @@
     <div class="flex items-start justify-between gap-4">
       <div class="flex items-center gap-3">
         <div
-            class="h-3 w-3 shrink-0 rounded-full"
-            :style="{ backgroundColor: transaction.category.colorHex }"
+          class="h-3 w-3 shrink-0 rounded-full"
+          :style="{ backgroundColor: transaction.category.colorHex }"
         />
 
-        <div>
+        <div class="flex min-h-10 flex-col justify-center">
           <p class="font-semibold text-slate-900">
             {{ transaction.category.name }}
           </p>
@@ -17,10 +17,6 @@
             class="text-sm text-slate-500"
           >
             {{ transaction.description }}
-          </p>
-
-          <p class="mt-1 text-xs text-slate-400">
-            {{ formattedDate }}
           </p>
         </div>
       </div>
@@ -76,10 +72,6 @@ defineEmits<{
 }>();
 
 const { formatCurrency } = useCurrency();
-
-const formattedDate = computed(() => {
-  return new Date(props.transaction.date).toLocaleDateString('da-DK');
-});
 
 const amountColorClass = computed(() => {
   if (props.transaction.amount < 0) {

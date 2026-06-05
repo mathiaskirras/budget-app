@@ -1,6 +1,4 @@
 <template>
-  <PageHeader title="Indkomst og faste udgifter" />
-
   <button
     type="button"
     class="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
@@ -48,7 +46,7 @@
       <CashflowList
         :cashflows="incomeItems"
         @edit="openEditForm"
-        @delete="removeCashflow"
+        @delete="openDeleteDialog"
       />
     </section>
 
@@ -60,10 +58,17 @@
       <CashflowList
         :cashflows="fixedExpenseItems"
         @edit="openEditForm"
-        @delete="removeCashflow"
+        @delete="openDeleteDialog"
       />
     </section>
   </template>
+
+  <ConfirmDialog
+    v-model="isDeleteDialogOpen"
+    title="Slet post"
+    description="Er du sikker på, at du vil slette posten? Denne handling kan ikke fortrydes."
+    @confirm="confirmDeleteCashflow"
+  />
 </template>
 
 <script setup lang="ts">
@@ -83,6 +88,8 @@ const {
 
 const isFormOpen = ref(false);
 const selectedCashflow = ref<CashflowItem | null>(null);
+const selectedCashflowId = ref<string | null>(null);
+const isDeleteDialogOpen = ref(false);
 
 onMounted(async () => {
   await fetchCashflows();
@@ -125,13 +132,18 @@ const saveCashflow = async (data: CashflowFormData) => {
   closeForm();
 };
 
-const removeCashflow = async (id: string) => {
-  const confirmed = confirm('Er du sikker på, at du vil slette posten?');
+const openDeleteDialog = (id: string) => {
+  selectedCashflowId.value = id;
+  isDeleteDialogOpen.value = true;
+};
 
-  if (!confirmed) {
+const confirmDeleteCashflow = async () => {
+  if (!selectedCashflowId.value) {
     return;
   }
 
-  await deleteCashflow(id);
+  await deleteCashflow(selectedCashflowId.value);
+
+  selectedCashflowId.value = null;
 };
 </script>

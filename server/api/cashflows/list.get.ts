@@ -1,20 +1,12 @@
+import { getCurrentBudget } from '../../utils/getCurrentBudget';
 import { prisma } from '../../utils/prisma';
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
-
-  const budgetId = query.budgetId as string;
-
-  if (!budgetId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'budgetId is required',
-    });
-  }
+  const budget = await getCurrentBudget(event);
 
   return prisma.cashflowItem.findMany({
     where: {
-      budgetId,
+      budgetId: budget.id,
     },
     orderBy: [
       {
