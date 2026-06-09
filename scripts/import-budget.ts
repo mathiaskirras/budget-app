@@ -6,7 +6,10 @@ const prisma = new PrismaClient()
 
 const USER_ID = '0feda932-bdb6-4a04-8814-c6e61e924b42'
 const IMPORT_BUDGET_NAME = 'Mathias\' budget'
-const IMPORT_FILE_PATH = path.resolve('budget-import-2017-2025.json')
+const IMPORT_FILE_PATH = path.resolve(
+  'imports',
+  'budget-import-2017-2025.json',
+)
 
 type ImportData = {
   budget: {
