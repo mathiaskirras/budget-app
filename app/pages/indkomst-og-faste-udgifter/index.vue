@@ -1,5 +1,6 @@
 <template>
   <button
+    v-if="!isFormOpen"
     type="button"
     class="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
     @click="openCreateForm"
@@ -188,6 +189,11 @@ const openCreateForm = () => {
 const openEditForm = (cashflow: CashflowItem) => {
   selectedCashflow.value = cashflow;
   isFormOpen.value = true;
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
 };
 
 const closeForm = () => {
