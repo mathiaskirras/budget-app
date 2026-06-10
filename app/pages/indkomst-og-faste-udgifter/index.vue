@@ -148,15 +148,29 @@ const activeFixedExpenseItems = computed(() => {
 });
 
 const inactiveIncomeItems = computed(() => {
-  return cashflows.value.filter((cashflow) => {
-    return cashflow.type === 'INCOME' && Boolean(cashflow.endDate);
-  });
+  return cashflows.value
+    .filter((cashflow) => {
+      return cashflow.type === 'INCOME' && Boolean(cashflow.endDate);
+    })
+    .sort((a, b) => {
+      return (
+        new Date(b.endDate!).getTime() -
+        new Date(a.endDate!).getTime()
+      );
+    });
 });
 
 const inactiveFixedExpenseItems = computed(() => {
-  return cashflows.value.filter((cashflow) => {
-    return cashflow.type === 'FIXED_EXPENSE' && Boolean(cashflow.endDate);
-  });
+  return cashflows.value
+    .filter((cashflow) => {
+      return cashflow.type === 'FIXED_EXPENSE' && Boolean(cashflow.endDate);
+    })
+    .sort((a, b) => {
+      return (
+        new Date(b.endDate!).getTime() -
+        new Date(a.endDate!).getTime()
+      );
+    });
 });
 
 const inactiveItems = computed(() => {
