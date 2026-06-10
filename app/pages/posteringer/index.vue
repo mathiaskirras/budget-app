@@ -31,7 +31,8 @@
 
   <div
     v-if="selectedTransaction"
-    class="mt-4"
+    ref="editFormContainer"
+    class="mt-4 -mb-12"
   >
     <TransactionForm
       :categories="categories"
@@ -41,7 +42,7 @@
 
     <button
       type="button"
-      class="mt-3 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-semibold text-slate-700"
+      class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-semibold text-slate-700"
       @click="selectedTransaction = null"
     >
       Annuller redigering
@@ -87,6 +88,7 @@ const {
 const selectedTransaction = ref<Transaction | null>(null);
 const selectedTransactionId = ref<string | null>(null);
 const isDeleteDialogOpen = ref(false);
+const editFormContainer = ref<HTMLElement | null>(null);
 
 onMounted(async () => {
   await Promise.all([
@@ -105,8 +107,15 @@ watch([month, year, mode], async () => {
   );
 });
 
-const openEditForm = (transaction: Transaction) => {
+const openEditForm = async (transaction: Transaction) => {
   selectedTransaction.value = transaction;
+
+  await nextTick();
+
+  editFormContainer.value?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  });
 };
 
 const saveTransaction = async (data: TransactionFormData) => {
