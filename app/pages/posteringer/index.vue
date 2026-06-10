@@ -32,7 +32,7 @@
   <div
     v-if="selectedTransaction"
     ref="editFormContainer"
-    class="mt-4"
+    class="mt-4 -mb-8"
   >
     <TransactionForm
       :categories="categories"
