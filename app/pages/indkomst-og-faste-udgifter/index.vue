@@ -38,28 +38,68 @@
   </div>
 
   <template v-else>
-    <section class="mb-6">
-      <h2 class="mb-3 text-base font-semibold text-slate-900">
-        Indkomst
+    <section class="mb-8">
+      <h2 class="mb-4 text-base font-semibold text-slate-900">
+        Aktive poster
       </h2>
 
-      <CashflowList
-        :cashflows="incomeItems"
-        @edit="openEditForm"
-        @delete="openDeleteDialog"
-      />
+      <div class="space-y-6">
+        <div>
+          <h3 class="mb-3 text-sm font-semibold text-slate-500">
+            Indkomst
+          </h3>
+
+          <CashflowList
+            :cashflows="activeIncomeItems"
+            @edit="openEditForm"
+            @delete="openDeleteDialog"
+          />
+        </div>
+
+        <div>
+          <h3 class="mb-3 text-sm font-semibold text-slate-500">
+            Faste udgifter
+          </h3>
+
+          <CashflowList
+            :cashflows="activeFixedExpenseItems"
+            @edit="openEditForm"
+            @delete="openDeleteDialog"
+          />
+        </div>
+      </div>
     </section>
 
-    <section>
-      <h2 class="mb-3 text-base font-semibold text-slate-900">
-        Faste udgifter
+    <section v-if="inactiveItems.length > 0">
+      <h2 class="mb-4 text-base font-semibold text-slate-900">
+        Inaktive poster
       </h2>
 
-      <CashflowList
-        :cashflows="fixedExpenseItems"
-        @edit="openEditForm"
-        @delete="openDeleteDialog"
-      />
+      <div class="space-y-6">
+        <div v-if="inactiveIncomeItems.length > 0">
+          <h3 class="mb-3 text-sm font-semibold text-slate-500">
+            Indkomst
+          </h3>
+
+          <CashflowList
+            :cashflows="inactiveIncomeItems"
+            @edit="openEditForm"
+            @delete="openDeleteDialog"
+          />
+        </div>
+
+        <div v-if="inactiveFixedExpenseItems.length > 0">
+          <h3 class="mb-3 text-sm font-semibold text-slate-500">
+            Faste udgifter
+          </h3>
+
+          <CashflowList
+            :cashflows="inactiveFixedExpenseItems"
+            @edit="openEditForm"
+            @delete="openDeleteDialog"
+          />
+        </div>
+      </div>
     </section>
   </template>
 
@@ -95,16 +135,35 @@ onMounted(async () => {
   await fetchCashflows();
 });
 
-const incomeItems = computed(() => {
+const activeIncomeItems = computed(() => {
   return cashflows.value.filter((cashflow) => {
-    return cashflow.type === 'INCOME';
+    return cashflow.type === 'INCOME' && !cashflow.endDate;
   });
 });
 
-const fixedExpenseItems = computed(() => {
+const activeFixedExpenseItems = computed(() => {
   return cashflows.value.filter((cashflow) => {
-    return cashflow.type === 'FIXED_EXPENSE';
+    return cashflow.type === 'FIXED_EXPENSE' && !cashflow.endDate;
   });
+});
+
+const inactiveIncomeItems = computed(() => {
+  return cashflows.value.filter((cashflow) => {
+    return cashflow.type === 'INCOME' && Boolean(cashflow.endDate);
+  });
+});
+
+const inactiveFixedExpenseItems = computed(() => {
+  return cashflows.value.filter((cashflow) => {
+    return cashflow.type === 'FIXED_EXPENSE' && Boolean(cashflow.endDate);
+  });
+});
+
+const inactiveItems = computed(() => {
+  return [
+    ...inactiveIncomeItems.value,
+    ...inactiveFixedExpenseItems.value,
+  ];
 });
 
 const openCreateForm = () => {
