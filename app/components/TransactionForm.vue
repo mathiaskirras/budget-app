@@ -168,7 +168,7 @@ const submitLabel = computed(() => {
 
 const categoryMetaText = computed(() => {
   if (!selectedCategory.value?.target) {
-    return 'Budgetkategori';
+    return 'Intet månedligt mål';
   }
 
   return `Månedligt mål: ${formatCurrency(Number(selectedCategory.value.target))}`;
