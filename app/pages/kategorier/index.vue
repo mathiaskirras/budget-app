@@ -80,9 +80,16 @@ const openCreateForm = async () => {
   });
 };
 
-const openEditForm = (category: Category) => {
+const openEditForm = async (category: Category) => {
   selectedCategory.value = category;
   isFormOpen.value = true;
+
+  await nextTick();
+
+  formContainer.value?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  });
 };
 
 const closeForm = () => {
