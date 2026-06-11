@@ -1,5 +1,6 @@
 <template>
   <button
+    v-if="!isFormOpen"
     type="button"
     class="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
     @click="openCreateForm"
@@ -13,6 +14,7 @@
 
   <div
     v-if="isFormOpen"
+    ref="formContainer"
     class="mb-4"
   >
     <CategoryForm
@@ -60,14 +62,22 @@ const isFormOpen = ref(false);
 const selectedCategory = ref<Category | null>(null);
 const selectedCategoryId = ref<string | null>(null);
 const isDeleteDialogOpen = ref(false);
+const formContainer = ref<HTMLElement | null>(null);
 
 onMounted(async () => {
   await fetchCategories();
 });
 
-const openCreateForm = () => {
+const openCreateForm = async () => {
   selectedCategory.value = null;
   isFormOpen.value = true;
+
+  await nextTick();
+
+  formContainer.value?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  });
 };
 
 const openEditForm = (category: Category) => {
