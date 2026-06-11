@@ -37,7 +37,7 @@
             </p>
 
             <p class="mt-1 truncate text-sm font-medium text-slate-900">
-              {{ user?.email }}
+              {{ displayName }}
             </p>
           </div>
 
@@ -124,6 +124,13 @@ const handleClickOutside = (event: MouseEvent) => {
     isMenuOpen.value = false;
   }
 };
+
+const displayName = computed(() => {
+  return user.value?.user_metadata?.display_name
+    || user.value?.user_metadata?.full_name
+    || user.value?.email
+    || 'Bruger';
+});
 
 onMounted(() => {
   window.addEventListener('click', handleClickOutside);
