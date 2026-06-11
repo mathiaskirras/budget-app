@@ -95,8 +95,6 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside } from '@vueuse/core';
-  
 const route = useRoute();
 
 const isMenuOpen = ref(false);
@@ -117,8 +115,22 @@ const pageTitle = computed(() => {
   return titles[route.path] ?? 'Dit budget';
 });
 
-onClickOutside(menuRef, () => {
-  isMenuOpen.value = false;
+const handleClickOutside = (event: MouseEvent) => {
+  if (!menuRef.value) {
+    return;
+  }
+
+  if (!menuRef.value.contains(event.target as Node)) {
+    isMenuOpen.value = false;
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleClickOutside);
 });
 
 const logout = async () => {
