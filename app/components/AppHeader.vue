@@ -15,7 +15,7 @@
         </h1>
       </div>
 
-      <div class="relative">
+      <div class="relative" ref="menuRef">
         <button
           type="button"
           class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50"
@@ -95,9 +95,12 @@
 </template>
 
 <script setup lang="ts">
+import { onClickOutside } from '@vueuse/core';
+  
 const route = useRoute();
 
 const isMenuOpen = ref(false);
+const menuRef = ref<HTMLElement | null>(null);
 const user = useSupabaseUser();
 const supabase = useSupabaseClient();
 
@@ -112,6 +115,10 @@ const pageTitle = computed(() => {
   };
 
   return titles[route.path] ?? 'Dit budget';
+});
+
+onClickOutside(menuRef, () => {
+  isMenuOpen.value = false;
 });
 
 const logout = async () => {
