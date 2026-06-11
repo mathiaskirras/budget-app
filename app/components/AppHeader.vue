@@ -64,7 +64,7 @@
             />
             <span>Kategorier</span>
           </NuxtLink>
-
+<!--
           <NuxtLink
             to="/indstillinger"
             class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50"
@@ -76,7 +76,7 @@
             />
             <span>Indstillinger</span>
           </NuxtLink>
-
+-->
           <button
             type="button"
             class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50"
