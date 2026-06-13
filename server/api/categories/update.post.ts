@@ -16,6 +16,7 @@ export default defineEventHandler(async (event) => {
       colorHex: body.colorHex,
       type: body.type,
       target: body.target ?? null,
+      isActive: body.isActive,
     },
   });
 });

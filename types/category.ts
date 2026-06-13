@@ -10,6 +10,7 @@ export type Category = {
   target: string | number | null;
   createdAt: string;
   updatedAt: string;
+  isActive: boolean;
 };
 
 export type CategoryFormData = {
@@ -19,4 +20,5 @@ export type CategoryFormData = {
   colorHex: string;
   type: CategoryType;
   target: number | null;
+  isActive?: boolean;
 };

@@ -1,8 +1,13 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaPg({
+  connectionString: "postgresql://postgres.zpaghilvzenwyexevedp:gieTUR5fRN5nO0of@aws-1-eu-west-2.pooler.supabase.com:6543/postgres?pgbouncer=true"!,
+})
+
+const prisma = new PrismaClient({ adapter })
 
 const USER_ID = '0feda932-bdb6-4a04-8814-c6e61e924b42'
 const IMPORT_BUDGET_NAME = 'Mathias\' budget'

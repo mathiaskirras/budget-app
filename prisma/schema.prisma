@@ -20,15 +20,17 @@ model Budget {
 }
 
 model Category {
-  id          String       @id @default(uuid())
+  id          String       @id @default(cuid())
   budgetId    String
   name        String
   description String?
   colorHex    String
-  type        CategoryType @default(EXPENSE)
+  type        CategoryType
   target      Decimal?
 
-  budget       Budget        @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  isActive Boolean @default(true)
+
+  budget       Budget        @relation(fields: [budgetId], references: [id])
   transactions Transaction[]
 
   createdAt DateTime @default(now())

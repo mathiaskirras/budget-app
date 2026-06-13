@@ -45,7 +45,7 @@
       class="absolute z-20 mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg"
     >
       <button
-        v-for="category in categories"
+        v-for="category in activeCategories"
         :key="category.id"
         type="button"
         class="flex w-full items-center gap-3 px-3 py-3 text-left transition hover:bg-slate-50"
@@ -101,6 +101,12 @@ const isOpen = ref(false);
 const selectedCategory = computed(() => {
   return props.categories.find((category) => {
     return category.id === props.modelValue;
+  });
+});
+
+const activeCategories = computed(() => {
+  return props.categories.filter((category) => {
+    return category.isActive;
   });
 });
 

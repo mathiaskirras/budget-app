@@ -78,6 +78,38 @@
       </select>
     </div>
 
+    <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
+      <div>
+        <p class="text-sm font-medium text-slate-900">
+          Aktiv kategori
+        </p>
+
+        <p class="mt-0.5 text-xs text-slate-500">
+          Vises ved oprettelse af nye posteringer.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        :class="[
+          'relative h-8 w-14 rounded-full transition',
+          form.isActive
+            ? 'bg-emerald-600'
+            : 'bg-slate-300',
+        ]"
+        @click="form.isActive = !form.isActive"
+      >
+        <span
+          :class="[
+            'absolute top-1 h-6 w-6 rounded-full bg-white shadow transition',
+            form.isActive
+              ? 'left-7'
+              : 'left-1',
+          ]"
+        />
+      </button>
+    </div>
+
     <div class="flex gap-3">
       <button
         type="submit"
@@ -125,6 +157,7 @@ const form = reactive<{
   colorHex: string;
   type: CategoryType;
   target: number | null;
+  isActive: boolean;
 }>({
   id: undefined,
   name: '',
@@ -132,6 +165,7 @@ const form = reactive<{
   colorHex: '#6366f1',
   type: 'EXPENSE',
   target: null,
+  isActive: true,
 });
 
 watch(
@@ -143,6 +177,7 @@ watch(
     form.colorHex = category?.colorHex ?? '#6366f1';
     form.type = category?.type ?? 'EXPENSE';
     form.target = category?.target === null ? null : Number(category?.target);
+    form.isActive = category?.isActive ?? true;
   },
   {
     immediate: true,
@@ -161,6 +196,7 @@ const submit = () => {
     colorHex: form.colorHex,
     type: form.type,
     target: form.target,
+    isActive: form.isActive,
   });
 
   if (!isEditing.value) {
@@ -169,6 +205,7 @@ const submit = () => {
     form.colorHex = '#6366f1';
     form.type = 'EXPENSE';
     form.target = null;
+    form.isActive = true;
   }
 };
 </script>

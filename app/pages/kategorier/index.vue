@@ -1,5 +1,6 @@
 <template>
   <button
+    v-if="!isFormOpen"
     type="button"
     class="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
     @click="openCreateForm"
@@ -13,6 +14,7 @@
 
   <div
     v-if="isFormOpen"
+    ref="formContainer"
     class="mb-4"
   >
     <CategoryForm
@@ -29,12 +31,31 @@
     Henter kategorier...
   </div>
 
-  <CategoryList
-    v-else
-    :categories="categories"
-    @edit="openEditForm"
-    @delete="openDeleteDialog"
-  />
+  <template v-else>
+    <section class="mb-6">
+      <h2 class="mb-3 text-base font-semibold text-slate-900">
+        Aktive kategorier
+      </h2>
+
+      <CategoryList
+        :categories="activeCategories"
+        @edit="openEditForm"
+        @delete="openDeleteDialog"
+      />
+    </section>
+
+    <section v-if="inactiveCategories.length > 0">
+      <h2 class="mb-3 text-base font-semibold text-slate-900">
+        Inaktive kategorier
+      </h2>
+
+      <CategoryList
+        :categories="inactiveCategories"
+        @edit="openEditForm"
+        @delete="openDeleteDialog"
+      />
+    </section>
+  </template>
 
   <ConfirmDialog
     v-model="isDeleteDialogOpen"
@@ -60,19 +81,45 @@ const isFormOpen = ref(false);
 const selectedCategory = ref<Category | null>(null);
 const selectedCategoryId = ref<string | null>(null);
 const isDeleteDialogOpen = ref(false);
+const formContainer = ref<HTMLElement | null>(null);
 
 onMounted(async () => {
   await fetchCategories();
 });
 
-const openCreateForm = () => {
-  selectedCategory.value = null;
-  isFormOpen.value = true;
+const activeCategories = computed(() => {
+  return categories.value.filter((category) => {
+    return category.isActive;
+  });
+});
+
+const inactiveCategories = computed(() => {
+  return categories.value.filter((category) => {
+    return !category.isActive;
+  });
+});
+
+const scrollToForm = async () => {
+  await nextTick();
+
+  formContainer.value?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  });
 };
 
-const openEditForm = (category: Category) => {
+const openCreateForm = async () => {
+  selectedCategory.value = null;
+  isFormOpen.value = true;
+
+  await scrollToForm();
+};
+
+const openEditForm = async (category: Category) => {
   selectedCategory.value = category;
   isFormOpen.value = true;
+
+  await scrollToForm();
 };
 
 const closeForm = () => {
