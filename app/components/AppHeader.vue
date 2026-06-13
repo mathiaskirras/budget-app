@@ -15,7 +15,7 @@
         </h1>
       </div>
 
-      <div class="relative">
+      <div class="relative" ref="menuRef">
         <button
           type="button"
           class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50"
@@ -37,7 +37,7 @@
             </p>
 
             <p class="mt-1 truncate text-sm font-medium text-slate-900">
-              {{ user?.email }}
+              {{ displayName }}
             </p>
           </div>
 
@@ -64,7 +64,7 @@
             />
             <span>Kategorier</span>
           </NuxtLink>
-
+<!--
           <NuxtLink
             to="/indstillinger"
             class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50"
@@ -76,7 +76,7 @@
             />
             <span>Indstillinger</span>
           </NuxtLink>
-
+-->
           <button
             type="button"
             class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50"
@@ -98,6 +98,7 @@
 const route = useRoute();
 
 const isMenuOpen = ref(false);
+const menuRef = ref<HTMLElement | null>(null);
 const user = useSupabaseUser();
 const supabase = useSupabaseClient();
 
@@ -106,12 +107,37 @@ const pageTitle = computed(() => {
     '/': 'Overblik',
     '/ny-postering': 'Ny postering',
     '/posteringer': 'Posteringer',
-    '/indkomst-og-faste-udgifter': 'Indkomst og faste udgifter',
+    '/indkomst-og-faste-udgifter': 'Indkomst og udgifter',
     '/kategorier': 'Kategorier',
     '/indstillinger': 'Indstillinger',
   };
 
   return titles[route.path] ?? 'Dit budget';
+});
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (!menuRef.value) {
+    return;
+  }
+
+  if (!menuRef.value.contains(event.target as Node)) {
+    isMenuOpen.value = false;
+  }
+};
+
+const displayName = computed(() => {
+  return user.value?.user_metadata?.display_name
+    || user.value?.user_metadata?.full_name
+    || user.value?.email?.toLowerCase().includes('anna') ? 'Anna Winter' : user.value?.email?.toLowerCase().includes('mathiaskirras') ? 'Mathias Rasmussen' : user.value?.email
+    || 'Bruger';
+});
+
+onMounted(() => {
+  window.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleClickOutside);
 });
 
 const logout = async () => {

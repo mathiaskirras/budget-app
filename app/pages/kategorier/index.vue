@@ -113,13 +113,24 @@ const openCreateForm = async () => {
   isFormOpen.value = true;
 
   await scrollToForm();
+  await nextTick();
+
+  formContainer.value?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  });
 };
 
 const openEditForm = async (category: Category) => {
   selectedCategory.value = category;
   isFormOpen.value = true;
 
-  await scrollToForm();
+  await nextTick();
+
+  formContainer.value?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  });
 };
 
 const closeForm = () => {

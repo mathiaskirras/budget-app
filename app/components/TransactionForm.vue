@@ -5,7 +5,7 @@
   >
     <div
       :class="[
-        'flex min-h-32 flex-col justify-center p-5',
+        'flex min-h-24 flex-col justify-center p-4',
         selectedCategory
           ? ''
           : 'border-b border-slate-200 bg-white text-slate-900',
@@ -14,7 +14,7 @@
     >
       <p
         :class="[
-          'text-sm font-medium',
+          'text-xs font-medium',
           selectedCategory ? heroMutedTextClass : 'text-slate-500',
         ]"
       >
@@ -23,7 +23,7 @@
 
       <p
         :class="[
-          'mt-1 text-2xl font-bold',
+          'mt-0.5 text-xl font-bold',
           selectedCategory ? heroTextClass : 'text-slate-900',
         ]"
       >
@@ -33,7 +33,7 @@
       <p
         v-if="selectedCategory"
         :class="[
-          'mt-1 text-sm',
+          'mt-0.5 text-xs',
           heroMutedTextClass,
         ]"
       >
@@ -41,7 +41,7 @@
       </p>
     </div>
 
-    <div class="space-y-4 p-5">
+    <div class="space-y-3 p-4">
       <div>
         <label class="text-sm font-medium text-slate-700">
           Kategori
@@ -98,7 +98,7 @@
         type="submit"
         :disabled="!isValid"
         :class="[
-          'w-full rounded-xl px-4 py-3 font-semibold text-white transition',
+          'w-full rounded-xl px-4 py-2.5 font-semibold text-white transition',
           isValid
             ? 'bg-emerald-600 hover:bg-emerald-500'
             : 'cursor-not-allowed bg-slate-300',
@@ -168,7 +168,7 @@ const submitLabel = computed(() => {
 
 const categoryMetaText = computed(() => {
   if (!selectedCategory.value?.target) {
-    return 'Budgetkategori';
+    return 'Intet månedligt mål';
   }
 
   return `Månedligt mål: ${formatCurrency(Number(selectedCategory.value.target))}`;
