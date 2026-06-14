@@ -1,5 +1,8 @@
 <template>
-  <nav class="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/95 backdrop-blur">
+  <nav
+    class="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/95 backdrop-blur"
+    style="padding-bottom: env(safe-area-inset-bottom);"
+  >
     <div class="mx-auto grid h-16 max-w-4xl grid-cols-3 px-2">
       <NuxtLink
         v-for="item in navigationItems"
