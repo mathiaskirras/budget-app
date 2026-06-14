@@ -68,6 +68,8 @@
 <script setup lang="ts">
 import type { Category, CategoryFormData } from '~~/types/category';
 
+const { showSuccess, showError } = useToast();
+
 const {
   categories,
   isLoading,
@@ -139,13 +141,19 @@ const closeForm = () => {
 };
 
 const saveCategory = async (data: CategoryFormData) => {
-  if (data.id) {
-    await updateCategory(data);
-  } else {
-    await createCategory(data);
-  }
+  try {
+    if (data.id) {
+      await updateCategory(data);
+      showSuccess('Kategori opdateret');
+    } else {
+      await createCategory(data);
+      showSuccess('Kategori oprettet');
+    }
 
-  closeForm();
+    closeForm();
+  } catch {
+    showError('Kunne ikke gemme kategorien');
+  }
 };
 
 const openDeleteDialog = (id: string) => {
