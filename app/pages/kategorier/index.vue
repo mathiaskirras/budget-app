@@ -113,14 +113,6 @@ const scrollToForm = async () => {
 const openCreateForm = async () => {
   selectedCategory.value = null;
   isFormOpen.value = true;
-
-  await scrollToForm();
-  await nextTick();
-
-  formContainer.value?.scrollIntoView({
-    behavior: 'smooth',
-    block: 'start',
-  });
 };
 
 const openEditForm = async (category: Category) => {
@@ -144,10 +136,10 @@ const saveCategory = async (data: CategoryFormData) => {
   try {
     if (data.id) {
       await updateCategory(data);
-      showSuccess('Kategori opdateret');
+      // showSuccess('Kategori opdateret');
     } else {
       await createCategory(data);
-      showSuccess('Kategori oprettet');
+      // showSuccess('Kategori oprettet');
     }
 
     closeForm();
